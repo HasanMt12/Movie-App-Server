@@ -1,6 +1,6 @@
 const express = require("express");
 require("dotenv").config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require("cors");
 const port = process.env.PORT || 5000;
 const app = express();
@@ -14,8 +14,23 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run(){
     try{
-        const productCollections = client.db('reusableProductSell').collection('sellProduct')
-               
+        const movieCollections = client.db('movieAppDB').collection('MoviesData')
+    
+
+         app.get('/movies', async (req, res) => {
+             const query = {};
+             const movies = await movieCollections.find(query).toArray();
+             res.send(movies);
+         })
+
+         app.get('/movies/:id', async(req, res) => {
+                const id = req.params.id;
+              
+                const query = { _id: new ObjectId(id) };
+                const movies = await movieCollections.findOne(query);
+                
+                res.send(movies);
+          });
     }
     finally{
 
